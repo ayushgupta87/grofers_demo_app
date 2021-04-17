@@ -41,3 +41,32 @@ Widget kbuildSignupLogin(BuildContext context, String title, function) {
     ),
   );
 }
+
+
+class kshowDialogue {
+  String titleis;
+  String contentIs;
+  kshowDialogue(this.titleis, this.contentIs);
+
+  showAlertDialoge(BuildContext context) {
+    Widget okButton = FlatButton(
+      child: Text('Ok'),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text(titleis),
+      content: SingleChildScrollView(child: Text(contentIs)),
+      actions: [
+        okButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+}
