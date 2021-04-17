@@ -1,0 +1,29 @@
+name: ayush_gupta
+description: A new Flutter application.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  http: ^0.13.1
+  modal_progress_hud: ^0.1.3
+
+
+flutter:
+  uses-material-design: true
+  assets:
+    - images/
+  fonts:
+   - family: Lobster
+     fonts:
+       - asset: fonts/Lobster-Regular.ttf
+
