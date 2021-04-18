@@ -22,6 +22,8 @@ var getAllCartItems = Uri.http(uri, 'ayush/api/cartItems');
 
 var getCartLenItems = Uri.http(uri, 'ayush/api/cartItemsLen');
 
+var addNoteInItemItems = Uri.http(uri, 'ayush/api/addNote');
+
 deleteItemFromCartItems(String itemName) {
   var deleteItemFromCartItems = Uri.http(
       uri, 'ayush/api/deleteFromCart/$itemName');

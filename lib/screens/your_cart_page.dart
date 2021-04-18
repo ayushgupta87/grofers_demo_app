@@ -16,6 +16,7 @@ class YourCart extends StatefulWidget {
 
 class _YourCartState extends State<YourCart> {
   int sumValue = 0;
+  TextEditingController note = TextEditingController();
 
   bool _saving = true;
 
@@ -73,8 +74,9 @@ class _YourCartState extends State<YourCart> {
         title: Text('Your Cart'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
-          onPressed: (){
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context){
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(context,
+                MaterialPageRoute(builder: (context) {
               return ProductsPage();
             }), (route) => false);
           },
@@ -90,7 +92,9 @@ class _YourCartState extends State<YourCart> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Text(
-                    itemOfList.length != 0 ? 'Today, 11am - noon' : 'Your Cart is empty',
+                    itemOfList.length != 0
+                        ? 'Today, 11am - noon'
+                        : 'Your Cart is empty',
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
@@ -108,7 +112,7 @@ class _YourCartState extends State<YourCart> {
                       padding: const EdgeInsets.only(
                           left: 10.0, right: 10, top: 3, bottom: 3),
                       child: Text(
-                          itemOfList.length != 0 ? 'FREE' : 'Add Now',
+                        itemOfList.length != 0 ? 'FREE' : 'Add Now',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -122,6 +126,7 @@ class _YourCartState extends State<YourCart> {
               child: ListView.builder(
                   itemCount: itemOfList.length,
                   itemBuilder: (context, i) {
+
                     return Slidable(
                       actionPane: SlidableDrawerActionPane(),
                       actionExtentRatio: 0.25,
@@ -307,7 +312,94 @@ class _YourCartState extends State<YourCart> {
                             caption: 'Notes',
                             color: Colors.grey,
                             icon: Icons.note_add,
-                            onTap: () {}),
+                            onTap: () {
+                              setState(() {
+                                note.text = itemOfList[i].note == 'NONE' ? ' ' : itemOfList[i].note;
+                              });
+                              showAlertDialoge(BuildContext context) {
+                                Widget okButton = FlatButton(
+                                  child: Text('Ok'),
+                                  onPressed: () async {
+                                    String access_token = await Validate();
+                                    if (access_token != null) {
+                                      var addnote = await http
+                                          .put(addNoteInItemItems, body: {
+                                        "item": itemOfList[i].item,
+                                        "Note": note.text
+                                      }, headers: {
+                                        HttpHeaders.authorizationHeader:
+                                            'Bearer $access_token'
+                                      });
+                                      var content = await jsonDecode(
+                                          addnote.body)['message'];
+                                      Navigator.pop(context);
+
+                                      if (addnote.statusCode == 200) {
+                                        itemOfList[i].note = note.text;
+
+                                        Fluttertoast.showToast(
+                                            msg: content.toString(),
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 6,
+                                            backgroundColor: Colors.black,
+                                            textColor: Colors.white,
+                                            fontSize: 16.0);
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: content.toString(),
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 6,
+                                            backgroundColor: Colors.black,
+                                            textColor: Colors.white,
+                                            fontSize: 16.0);
+                                      }
+                                    }
+                                  },
+                                );
+                                Widget cancelButton = FlatButton(
+                                  child: Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                                AlertDialog alert = AlertDialog(
+                                  title: Text('Add/Edit Note'),
+                                  content: SingleChildScrollView(
+                                      child: TextField(
+                                    controller: note,
+                                    maxLines: 5,
+                                    decoration: InputDecoration(
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        borderSide: BorderSide(
+                                            width: 1, color: Colors.black),
+                                      ),
+                                      labelText: "Add Note",
+                                      labelStyle:
+                                          TextStyle(color: Colors.black),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                    ),
+                                  )),
+                                  actions: [
+                                    cancelButton,
+                                    okButton,
+                                  ],
+                                );
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return alert;
+                                  },
+                                );
+                              }
+
+                              showAlertDialoge(context);
+                            }),
                         IconSlideAction(
                           caption: 'Delete',
                           color: Colors.red,
@@ -326,7 +418,6 @@ class _YourCartState extends State<YourCart> {
                               if (deleteItem.statusCode == 200) {
                                 setState(() {
                                   itemOfList.removeAt(i);
-
                                 });
                                 List newList = [];
                                 for (var z = 0; z < itemOfList.length; z++) {
@@ -407,7 +498,7 @@ class CartItems {
   String qty;
   final String kg;
   final String price;
-  final String note;
+  String note;
 
   CartItems(this.item, this.qty, this.kg, this.price, this.note);
 }
