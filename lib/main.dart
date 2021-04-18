@@ -1,6 +1,4 @@
 import 'package:ayush_gupta/screens/login_screen.dart';
-import 'package:ayush_gupta/screens/products_page.dart';
-import 'package:ayush_gupta/screens/register_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {

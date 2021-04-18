@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dropdownfield/dropdownfield.dart';
 
 Widget KbuildTextBox(TextEditingController inputController, String labelText,
     Icon icon, int lines, TextInputType textInputType, bool isHidden) {
@@ -69,4 +70,16 @@ class kshowDialogue {
       },
     );
   }
+}
+
+Widget KbuildDropDown(TextEditingController dropdownController, List list) {
+  return Padding(
+    padding: const EdgeInsets.only(right: 5, left: 5, top: 5),
+    child: DropDownField(
+      controller: dropdownController,
+      enabled: true,
+      items: list,
+      itemsVisibleInDropdown: 2,
+    ),
+  );
 }

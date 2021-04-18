@@ -2,10 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ayush_gupta/models/network_info.dart';
 import 'package:ayush_gupta/reuseable_widgets/reuseable.dart';
+import 'package:ayush_gupta/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class SingUpPage extends StatefulWidget {
   @override
@@ -97,7 +101,53 @@ class _SingUpPageState extends State<SingUpPage> {
               height: MediaQuery.of(context).size.height * 0.05,
             ),
             Center(
-                child: kbuildSignupLogin(context, 'Sign Up', () async {})),
+                child: kbuildSignupLogin(context, 'Sign Up', () async {
+
+                  setState(() {
+                    _saving=true;
+                  });
+
+                  var registerUser = await http.post(registerURI,
+                  body: {
+                    "name" : name.text,
+                    "username" : username.text,
+                    "password" : password.text,
+                    "confirm_password" : confirmPassword.text
+                  });
+
+                  var content = await jsonDecode(registerUser.body)['message'];
+
+                  if (registerUser.statusCode == 200){
+                    setState(() {
+                      _saving=false;
+                    });
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context){
+                      return LoginPage();
+                    }), (route) => false);
+                    Fluttertoast.showToast(
+                        msg: content.toString(),
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 6,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else {
+                    setState(() {
+                      _saving=false;
+                    });
+                    Fluttertoast.showToast(
+                        msg: content.toString(),
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 6,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  }
+
+
+                })),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.2,
             ),

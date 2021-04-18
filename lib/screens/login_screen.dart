@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:ayush_gupta/models/network_info.dart';
 import 'package:ayush_gupta/reuseable_widgets/reuseable.dart';
 import 'package:ayush_gupta/screens/products_page.dart';
+import 'package:ayush_gupta/screens/register_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -26,6 +27,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: Center(
+          child: GestureDetector(
+            onTap: () {},
+            child: Text(''),
+          ),
+        ),
+      ),
       backgroundColor: Color(0xff7cdc41),
       body: SingleChildScrollView(
         child: Column(
@@ -158,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                                   jsonDecode(
                                       sendLoginRequest.body)['access_token']);
                               sharedPreference.setString(
-                                  'efresh_token',
+                                  'refresh_token',
                                   jsonDecode(
                                       sendLoginRequest.body)['refresh_token']);
 
@@ -169,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                                   }).timeout(Duration(seconds: 10));
 
                               var userIs =
-                              await jsonDecode(user.body)['customer_user'];
+                              await jsonDecode(user.body)['user'];
 
                               if (user.statusCode == 200) {
                                 Navigator.pushAndRemoveUntil(context,
@@ -198,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                                 gravity: ToastGravity.CENTER,
                                 timeInSecForIosWeb: 6,
                                 backgroundColor: Colors.black,
-                                textColor: Colors.black,
+                                textColor: Colors.white,
                                 fontSize: 24.0);
                             setState(() {
                               buttonClicked = false;
@@ -226,7 +236,11 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Text('New to Grofers? '),
                 TextButton(
-                  onPressed: buttonClicked == false ? () {} : null,
+                  onPressed: buttonClicked == false ? () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context){
+                      return SingUpPage();
+                    }));
+                  } : null,
                   child: Text('Register Now !'),
                 ),
               ],
